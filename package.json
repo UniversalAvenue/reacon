@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "./node_modules/rimraf/bin.js lib",
     "test": "npm run build && ./node_modules/jest-cli/bin/jest.js",
-    "build": "npm run clean && ./node_modules/babel-cli/bin/babel.js src --out-dir lib"
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "prepublish": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,7 @@
     "component",
     "template"
   ],
-  "author": "Daniel Werthén",
+  "author": "Daniel Werthén <danielwerthen@gmail.com> (https://github.com/danielwerthen)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/UniversalAvenue/reacon/issues"
