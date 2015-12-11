@@ -1,0 +1,35 @@
+{
+  "name": "reacon",
+  "version": "0.0.1",
+  "description": "React component notation",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UniversalAvenue/reacon.git"
+  },
+  "keywords": [
+    "React",
+    "json",
+    "component",
+    "template"
+  ],
+  "author": "Daniel Werthén",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/UniversalAvenue/reacon/issues"
+  },
+  "homepage": "https://github.com/UniversalAvenue/reacon#readme",
+  "peerDependencies": {
+    "lodash": "3.x",
+    "react": "0.x"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.3.17",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babel-preset-stage-0": "^6.3.13"
+  }
+}
