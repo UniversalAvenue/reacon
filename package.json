@@ -4,7 +4,8 @@
   "description": "React component notation",
   "main": "lib/index.js",
   "scripts": {
-    "test": "npm run test"
+    "test": "./node_modules/jest-cli/bin/jest.js",
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib"
   },
   "repository": {
     "type": "git",
@@ -31,5 +32,10 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13"
+  },
+  "jest": {
+    "testPathDirs": [
+      "lib"
+    ]
   }
 }
