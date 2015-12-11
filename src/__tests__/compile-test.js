@@ -19,6 +19,6 @@ describe('Compile', () => {
         { key: 'p3', component: 'p', children: 'TEMPLATE Lovely ${data.str}' },
       ],
     });
-    expect(res({ str: 'weather2' }).children[2].children).toEqual('Lovely weather');
+    expect(res({ str: 'weather' }).children[2].children).toEqual('Lovely weather');
   });
 });
