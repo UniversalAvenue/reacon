@@ -43,6 +43,11 @@ const parse = (str = '') => {
   return result;
 };
 
+/**
+ * Parse a object structure recursively
+ * @param {object} args - The Object to be interpolated
+ */
+
 export const interpolate = (args = {}) => {
   return _.reduce(args, reducer(str => {
     if (_.isArray(str)) {
