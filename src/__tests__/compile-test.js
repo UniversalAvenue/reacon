@@ -6,9 +6,9 @@ describe('Compile', () => {
   it('should produce a simple p tag', () => {
     const res = compile({
       component: 'p',
-      children: 'TEMPLATE Fred moves to ${data.city}',
+      children: 'TEMPLATE Fred goes to ${data.city}',
     });
-    expect(res({ city: 'Stockholm' }).children).toEqual('Fred moves to Stockholm');
+    expect(res({ city: 'Stockholm' }).children).toEqual('Fred goes to Stockholm');
   });
   it('should produce a complex div tag', () => {
     const res = compile({
