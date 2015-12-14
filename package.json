@@ -1,6 +1,5 @@
 {
   "name": "reacon",
-  "version": "0.0.1",
   "description": "React component notation",
   "main": "lib/index.js",
   "scripts": {
@@ -8,7 +7,8 @@
     "test": "npm run build && ./node_modules/jest-cli/bin/jest.js",
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "pkgfiles": "./node_modules/pkgfiles/bin/pkgfiles.js",
-    "prepublish": "npm run clean && npm run build"
+    "prepublish": "npm run clean && npm run build",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "files": [
     "lib",
@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/UniversalAvenue/reacon.git"
+    "url": "https://github.com/UniversalAvenue/reacon.git"
   },
   "keywords": [
     "React",
@@ -42,7 +42,8 @@
     "jest-cli": "^0.8.1",
     "pkgfiles": "^2.3.0",
     "react-addons-test-utils": "^0.14.3",
-    "rimraf": "^2.4.4"
+    "rimraf": "^2.4.4",
+    "semantic-release": "^4.3.5"
   },
   "jest": {
     "testPathDirs": [
