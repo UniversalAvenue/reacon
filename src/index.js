@@ -62,6 +62,9 @@ export const inject = (compiled) => (data = {}, props = {}) => {
   if (_.isFunction(compiled)) {
     return compiled(data, props);
   }
+  if (!_.isObject(compiled) || _.keys(compiled).length < 1) {
+    return compiled;
+  }
   return _.reduce(compiled, reducer(fn => {
     if (_.isFunction(fn)) {
       return fn(data, props);

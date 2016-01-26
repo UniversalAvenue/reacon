@@ -23,11 +23,13 @@ describe('Compile', () => {
     const res = reactify({
       component: 'p',
       id: '5',
+      amount: 5,
       children: 'TEMPLATE Fred lives in ${data.city}',
     });
     const comp = renderInto(res({ city: 'Stockholm' }));
     const p = findTag(comp, 'p');
     expect(p.innerHTML).toEqual('Fred lives in Stockholm');
+    expect(p.props.amount).toEqual(5);
   });
   it('should produce a complex div tag', () => {
     const res = reactify({
