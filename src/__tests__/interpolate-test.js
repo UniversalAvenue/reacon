@@ -80,4 +80,19 @@ describe('inject', () => {
     expect(_.isNumber(res.person.age)).toEqual(true);
     expect(_.isArray(res.person.roles)).toEqual(true);
   });
+  it('should preserve primitive type', () => {
+    const alpha = interpolate({
+      person: {
+        age: 15,
+        numbers: [
+          1, 2, 3,
+        ],
+      },
+    });
+
+    const res = inject(alpha)({
+    });
+    expect(res.person.age).toEqual(15);
+    expect(res.person.numbers).toEqual([ 1, 2, 3 ]);
+  });
 });

@@ -45,6 +45,9 @@ const parse = (str = '') => {
 };
 
 export const interpolate = (args = {}) => {
+  if (_.keys(args).length < 1) {
+    return args;
+  }
   return _.reduce(args, reducer(str => {
     if (_.isArray(str)) {
       return str.map(s => interpolate(s));
@@ -62,6 +65,9 @@ export const interpolate = (args = {}) => {
 export const inject = (compiled) => (data = {}, props = {}) => {
   if (_.isFunction(compiled)) {
     return compiled(data, props);
+  }
+  if (_.isArray(compiled)) {
+    return compiled.map(c => c(data, props));
   }
   if (!_.isObject(compiled) || _.keys(compiled).length < 1) {
     return compiled;
