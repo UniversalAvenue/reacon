@@ -6,6 +6,7 @@ const reducer = fn => (sum, str, key) => {
   return sum;
 };
 
+
 const template = (str) => {
   const compiled = _.template(str);
   return (data = {}, props = {}) => {
