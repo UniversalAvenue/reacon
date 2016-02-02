@@ -84,13 +84,20 @@ export const inject = (compiled) => (data = {}, props = {}) => {
 };
 
 export const compile = (node, map = id => id) => {
+  if (_.isString(node)) {
+    const fn = inject(parse(node));
+    return fn;
+  }
+  if (_.keys(node) < 1) {
+    return () => node;
+  }
   const propsFn = interpolate(_.omit(node, 'children', 'component'));
   const children = node.children;
   if (_.isString(children)) {
     propsFn.children = parse(children);
   } else if (_.isArray(children)) {
     const tmp = children.map(child => compile(child, map));
-    propsFn.children = data => tmp.map(fn => fn(data));
+    propsFn.children = (data, props) => tmp.map(fn => fn(data, props));
   } else if (_.isObject(children)) {
     propsFn.children = compile(children, map);
   } else if (children) {

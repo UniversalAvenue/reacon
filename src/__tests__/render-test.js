@@ -35,13 +35,33 @@ describe('Compile', () => {
     const res = reactify({
       component: 'div',
       children: [
-        { key: 'p1', component: 'span', children: 'Lovely' },
-        { key: 'p2', component: 'span', children: 'Lovely f2' },
-        { key: 'p3', component: 'p', children: 'TEMPLATE Lovely ${data.str}' },
+        { key: 'p3', component: 'p', children: [ 'TEMPLATE Lovely ${data.str}' ] },
       ],
     });
     const comp = renderInto(res({ str: 'weather' }));
     const p = findTag(comp, 'p');
-    expect(p.innerHTML).toEqual('Lovely weather');
+    expect(p.innerHTML).toEqual('<span data-reactid=".1.0.$p3.0">Lovely weather</span>');
+  });
+  it('should produce a constant nested array', () => {
+    const res = reactify({
+      component: 'div',
+      children: [
+        { key: 'p3', component: 'p', children: [ 'constant' ] },
+      ],
+    });
+    const comp = renderInto(res({ str: 'weather' }));
+    const p = findTag(comp, 'p');
+    expect(p.innerHTML).toEqual('<span data-reactid=".2.0.$p3.0">constant</span>');
+  });
+  it('should produce a nested array', () => {
+    const res = reactify({
+      component: 'div',
+      children: [
+        { key: 'p3', component: 'p', children: [ 42 ] },
+      ],
+    });
+    const comp = renderInto(res({ str: 'weather' }));
+    const p = findTag(comp, 'p');
+    expect(p.innerHTML).toEqual('<span data-reactid=".3.0.$p3.0">42</span>');
   });
 });
