@@ -35,8 +35,8 @@
   },
   "homepage": "https://github.com/UniversalAvenue/reacon#readme",
   "peerDependencies": {
-    "lodash": "3.x",
-    "react": "0.x"
+    "lodash": "*",
+    "react": "^0.14"
   },
   "devDependencies": {
     "babel-cli": "^6.3.17",
@@ -44,6 +44,7 @@
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
     "condition-circle": "^1.2.0",
+    "cz-conventional-changelog": "^1.1.5",
     "jest-cli": "^0.8.1",
     "pkgfiles": "^2.3.0",
     "react-addons-test-utils": "^0.14.3",
@@ -54,5 +55,10 @@
     "testPathDirs": [
       "lib"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
