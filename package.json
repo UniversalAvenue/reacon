@@ -47,6 +47,7 @@
     "cz-conventional-changelog": "^1.1.5",
     "jest-cli": "^12.1.1",
     "pkgfiles": "^2.3.0",
+    "react": "^15.1.0",
     "react-addons-test-utils": "^15.1.0",
     "rimraf": "^2.4.4",
     "semantic-release": "^4.3.5"
