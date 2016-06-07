@@ -20,7 +20,7 @@ Examples
         },
         {
           component: 'p',
-          children: 'Interpolate with ${data.value} and ${props.value}',
+          children: 'TEMPLATE Interpolate with ${data.value} and ${props.value}',
         },
       },
     });
