@@ -29,7 +29,6 @@ describe('Compile', () => {
     const comp = renderInto(res({ city: 'Stockholm' }));
     const p = findTag(comp, 'p');
     expect(p.innerHTML).toEqual('Fred lives in Stockholm');
-    expect(p.props.amount).toEqual(5);
   });
   it('should produce a complex div tag', () => {
     const res = reactify({
@@ -40,7 +39,7 @@ describe('Compile', () => {
     });
     const comp = renderInto(res({ str: 'weather' }));
     const p = findTag(comp, 'p');
-    expect(p.innerHTML).toEqual('<span data-reactid=".1.0.$p3.0">Lovely weather</span>');
+    expect(p.innerHTML).toEqual('<!-- react-text: 4 -->Lovely weather<!-- /react-text -->');
   });
   it('should produce a constant nested array', () => {
     const res = reactify({
@@ -51,7 +50,7 @@ describe('Compile', () => {
     });
     const comp = renderInto(res({ str: 'weather' }));
     const p = findTag(comp, 'p');
-    expect(p.innerHTML).toEqual('<span data-reactid=".2.0.$p3.0">constant</span>');
+    expect(p.innerHTML).toEqual('<!-- react-text: 4 -->constant<!-- /react-text -->');
   });
   it('should produce a nested array', () => {
     const res = reactify({
@@ -62,6 +61,6 @@ describe('Compile', () => {
     });
     const comp = renderInto(res({ str: 'weather' }));
     const p = findTag(comp, 'p');
-    expect(p.innerHTML).toEqual('<span data-reactid=".3.0.$p3.0">42</span>');
+    expect(p.innerHTML).toEqual('<!-- react-text: 4 -->42<!-- /react-text -->');
   });
 });
