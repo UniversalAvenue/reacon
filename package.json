@@ -1,6 +1,6 @@
 {
   "name": "reacon",
-  "description": "React component notation",
+  "description": "React component object notation",
   "main": "lib/index.js",
   "scripts": {
     "clean": "./node_modules/rimraf/bin.js lib",
