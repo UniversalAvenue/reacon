@@ -52,7 +52,7 @@
   },
   "jest": {
     "testPathDirs": [
-      "lib"
+      "src"
     ]
   },
   "config": {
