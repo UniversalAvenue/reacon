@@ -2,7 +2,6 @@
   "name": "reacon",
   "description": "React component notation",
   "main": "lib/index.js",
-  "version": "0.0.0-semantic-release",
   "scripts": {
     "clean": "./node_modules/rimraf/bin.js lib",
     "test": "npm run build && ./node_modules/jest-cli/bin/jest.js",
@@ -36,7 +35,7 @@
   "homepage": "https://github.com/UniversalAvenue/reacon#readme",
   "peerDependencies": {
     "lodash": "*",
-    "react": "^15.1.0"
+    "react": "^15.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.9.0",
