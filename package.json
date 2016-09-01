@@ -35,6 +35,7 @@
   "homepage": "https://github.com/UniversalAvenue/reacon#readme",
   "peerDependencies": {
     "lodash": "*",
+    "react-compose": "^1.7.0",
     "react": "^15.3.1"
   },
   "devDependencies": {
@@ -44,9 +45,11 @@
     "babel-preset-stage-0": "^6.5.0",
     "condition-circle": "^1.2.0",
     "cz-conventional-changelog": "^1.2.0",
+    "enzyme": "^2.4.1",
     "jest-cli": "^12.1.1",
     "pkgfiles": "^2.3.0",
     "react-addons-test-utils": "^15.1.0",
+    "react-dom": "^15.3.1",
     "rimraf": "^2.4.4",
     "semantic-release": "^4.3.5"
   },

@@ -1,5 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
+import { compose } from 'react-compose';
 
 function identity(id) {
   return id;
@@ -108,15 +109,48 @@ function isReacon(obj) {
 }
 
 export function reactifier(components, {
-  modifiers,
+  injectors,
 } = {}) {
+  const injs = Object.keys(injectors)
+    .map(key => [tokenize(key), injectors[key]]);
+
   function doReactify(content) {
     return deepTap(content, render, isReacon);
+  }
+
+  function matchInjector(str, key) {
+    let match;
+    const found = injs.find(i => {
+      match = i[0].exec(str);
+      return match;
+    });
+    if (match) {
+      return found[1](match[1], key);
+    }
+    return null;
+  }
+
+  function dynamicSplit(props) {
+    const dynamics = [];
+    const statics = {};
+    Object.keys(props).forEach(key => {
+      const match = matchInjector(props[key], key);
+      if (match) {
+        dynamics.push(match);
+      } else {
+        statics[key] = props[key];
+      }
+    });
+    return {
+      dynamics,
+      statics,
+    };
   }
 
   function render(obj) {
     const {
       type,
+      ...rest,
       props = {},
     } = obj;
     if (!type) {
@@ -129,8 +163,14 @@ export function reactifier(components, {
       }
       Component = type;
     }
-    const reactifiedProps = doReactify(props);
-    return <Component {...reactifiedProps} />;
+    const {
+      dynamics,
+      statics,
+    } = dynamicSplit(props);
+    if (dynamics.length > 0) {
+      Component = compose(dynamics)(Component);
+    }
+    return <Component {...doReactify(statics)} />;
   }
   return doReactify;
 }
