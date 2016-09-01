@@ -19,18 +19,18 @@ export function sliceModifiers(content) {
   };
 }
 
-function deepTap(obj, tap, isTapable) {
-  if (isTabable && isTabable(obj)) {
+function deepTap(obj, tap, isTapable = () => true) {
+  if (isTapable(obj)) {
     return tap(obj);
   } else if (_.isArray(obj)) {
-    return obj.map(item => deepTap(item, tap));
+    return obj.map(item => deepTap(item, tap, isTapable));
   } else if (_.isObject(obj)) {
     return Object.keys(obj)
       .reduce((sum, key) => Object.assign(sum, {
-        [key]: deepTap(obj[key], tap),
+        [key]: deepTap(obj[key], tap, isTapable),
       }), {});
   }
-  return tap(obj);
+  return isTapable(obj) ? tap(obj) : obj;
 }
 
 function tokenize(str) {
@@ -104,12 +104,14 @@ export function inflater({
 }
 
 function isReacon(obj) {
-  return _.isObject(obj) && _.isString(obj.type);
+  return obj && obj.type && _.isString(obj.type);
 }
 
-export function reactify(components) {
+export function reactifier(components, {
+  modifiers,
+} = {}) {
   function doReactify(content) {
-    return deepTap(obj, render, isReacon);
+    return deepTap(content, render, isReacon);
   }
 
   function render(obj) {
