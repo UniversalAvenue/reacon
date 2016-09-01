@@ -16,12 +16,28 @@ function composeEval(str, key) {
     }
   };
   return props => ({
-    ...props,
     [key]: fn(props),
   });
 }
 
-const reactify = reactifier({}, {
+function Map({
+  Wrapper,
+  items,
+  children,
+}) {
+  const element = React.Children.only(children);
+  return (<Wrapper>
+    {items.map((item, key) =>
+      React.cloneElement(element, {
+        key,
+        ...item,
+      }))}
+  </Wrapper>);
+}
+
+const reactify = reactifier({
+  Map,
+}, {
   injectors: {
     compose: composeEval,
   },
@@ -48,6 +64,72 @@ describe('Reactify', () => {
     });
     const a = ReactDOM.renderToStaticMarkup(React.cloneElement(component, { label: 'my ' }));
     const b = ReactDOM.renderToStaticMarkup(<div label="my ">my label</div>);
+    expect(a).toEqual(b);
+  });
+  it('should render nested components', () => {
+    const component = reactify({
+      type: 'div',
+      props: {
+        children: [
+          {
+            type: 'p',
+            props: {
+              children: 'I am a paragraf',
+            },
+          },
+          {
+            type: 'h1',
+            props: {
+              children: 'I am a header',
+            },
+          },
+          {
+            type: 'div',
+            props: {
+              children: 'I am a div',
+            },
+          },
+        ],
+      },
+    });
+    const a = ReactDOM.renderToStaticMarkup(component);
+    const b = ReactDOM.renderToStaticMarkup(<div>
+      <p>I am a paragraf</p>
+      <h1>I am a header</h1>
+      <div>I am a div</div>
+    </div>);
+    expect(a).toEqual(b);
+  });
+  it('should render mapped items', () => {
+    const component = reactify({
+      type: 'Map',
+      props: {
+        Wrapper: 'section',
+        items: [
+          {
+            label: 'First',
+          },
+          {
+            label: 'Second',
+          },
+          {
+            label: 'Third',
+          },
+        ],
+        children: {
+          type: 'p',
+          props: {
+            children: 'COMPOSE label',
+          },
+        },
+      },
+    });
+    const a = ReactDOM.renderToStaticMarkup(component);
+    const b = ReactDOM.renderToStaticMarkup(<section>
+      <p label="First">First</p>
+      <p label="Second">Second</p>
+      <p label="Third">Third</p>
+    </section>);
     expect(a).toEqual(b);
   });
 });
