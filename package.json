@@ -4,7 +4,7 @@
   "main": "lib/index.js",
   "scripts": {
     "clean": "./node_modules/rimraf/bin.js lib",
-    "test": "npm run build && ./node_modules/jest-cli/bin/jest.js",
+    "test": "./node_modules/jest-cli/bin/jest.js src",
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "pkgfiles": "./node_modules/pkgfiles/bin/pkgfiles.js",
     "prepublish": "npm run clean && npm run build",
@@ -46,6 +46,7 @@
     "condition-circle": "^1.2.0",
     "cz-conventional-changelog": "^1.2.0",
     "enzyme": "^2.4.1",
+    "jest-cli": "^15.1.1",
     "pkgfiles": "^2.3.0",
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.3.1",

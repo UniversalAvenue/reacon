@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom/server';
 describe('Scriptifier', () => {
   const scriptify = scriptifier({});
   it('should produce something', () => {
-    const to = scriptify({
+    const Component = scriptify({
       type: 'div',
       props: {
         children: {
@@ -16,7 +16,7 @@ describe('Scriptifier', () => {
         },
       },
     });
-    const res = ReactDOM.renderToStaticMarkup(to);
+    const res = ReactDOM.renderToStaticMarkup(<Component />);
     expect(res).toEqual('<div><p>Hola</p></div>');
   });
 });
