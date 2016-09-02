@@ -8,12 +8,15 @@ describe('Scriptifier', () => {
     const to = scriptify({
       type: 'div',
       props: {
-        children: 'test',
+        children: {
+          type: 'p',
+          props: {
+            children: 'Hola',
+          },
+        },
       },
     });
-    const res = ReactDOM.renderToStaticMarkup(to.call({
-      React,
-    }));
-    expect(res).toEqual('<div>test</div>');
+    const res = ReactDOM.renderToStaticMarkup(to);
+    expect(res).toEqual('<div><p>Hola</p></div>');
   });
 });

@@ -221,20 +221,56 @@ function composeEval(str, key) {
 export function scriptifier(components, {
 } = {}) {
 
-  function doReactify(content) {
-    return deepTap(content, render, isReacon);
+  function stringifyComponent(type) {
+    if (type[0] === type[0].toUpperCase()
+        && components[type]) {
+      return type;
+    }
+    return JSON.stringify(type);
   }
 
-  function renderBase(obj) {
+  function stringifyReacon(obj) {
     const {
       type,
       props,
     } = obj;
+    return `React.createElement(${stringifyComponent(type)}, ${stringify(props)})`;
+  }
+
+  function stringifyObject(props) {
+    const val = Object.keys(props)
+      .map(key =>
+        `${JSON.stringify(key)}: ${stringify(props[key])}`)
+      .join(', ');
+    return `{${val}}`;
+  }
+
+  function stringifyArray(props) {
+    return `[${props.map(item => stringify(item)).join(',')}]`;
+  }
+
+  function stringify(obj) {
+    if (isReacon(obj)) {
+      return stringifyReacon(obj);
+    } else if (_.isArray(obj)) {
+      return stringifyArray(obj);
+    } else if (_.isObject(obj)) {
+      return stringifyObject(obj);
+    }
+    return JSON.stringify(obj);
+  }
+
+  function renderBase(obj) {
     return new Function(`
       with(this) {
-        return React.createElement("${type}", ${JSON.stringify(props)});
+        return () => {
+          return ${stringify(obj)};
+        };
       }
-    `);
+    `).call({
+      React,
+      ...components,
+    });
   }
   return content => deepTap(content, renderBase, isReacon);
 }

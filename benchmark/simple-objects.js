@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 
-import { reactifier } from '../src/index';
+import { scriptifier, reactifier } from '../src/index';
 import * as components from './components';
 
 const title = 'Hello reacon';
@@ -9,17 +9,17 @@ const tagline = 'This is the tagline';
 const body = 'This is the body and it is huge';
 const button = 'Click this button';
 
-const iterations = 1;
-const bodies = Array(1000).fill().map((_, i) => i);
+const iterations = 10000;
+const bodies = Array(1).fill().map((_, i) => i);
 
 const reaconContent = {
-  type: 'div',
+  type: 'section',
   props: {
     children: [
       {
         type: 'Title',
         props: {
-          children: 'COMPOSE title',
+          children: title,
         },
       },
       {
@@ -45,33 +45,39 @@ const reaconContent = {
   },
 };
 
+const scriptify = scriptifier(components);
 const reactify = reactifier(components);
 
-
 function renderReacon() {
+  const Component = scriptify(reaconContent);
+  return <Component />;
+}
+
+function renderSlowReacon() {
   return reactify(reaconContent);
 }
 
 function renderStraight() {
-  const Content = components.Content;
+  const Title = components.Title;
+  const Tagline = components.Tagline;
   const Body = components.Body;
-  return (<Content
-    title={title}
-    tagline={tagline}
-    button={button}
-  >
+  const Button = components.Button;
+  return (<section>
+    <Title>{title}</Title>
+    <Tagline>{tagline}</Tagline>
+    <Button>{button}</Button>
     {bodies.map((key) => <Body key={key}>{body}</Body>)}
-  </Content>);
+  </section>);
 }
 
-function measure(foo) {
+function measure(foo, str) {
   function getNow() {
     return Date.now();
   }
   const t0 = getNow();
   const res = foo();
   const t1 = getNow();
-  console.log('Time was', t1 - t0, 'ms');
+  console.log(str, ':', t1 - t0, 'ms');
   return res;
 }
 
@@ -85,5 +91,19 @@ function loop(ln, foo) {
   };
 }
 
-measure(loop(iterations, renderReacon));
-measure(loop(iterations, renderStraight));
+measure(loop(iterations, renderReacon), 'Scriptify');
+measure(loop(iterations, renderSlowReacon), 'Reactify');
+measure(loop(iterations, renderStraight), 'Standard');
+
+// console.log(ReactDOM.renderToStaticMarkup(renderReacon()));
+// console.log(ReactDOM.renderToStaticMarkup(renderStraight()));
+console.log(
+  'Scriptify is equal to Standard?',
+  ReactDOM.renderToStaticMarkup(renderReacon()) ===
+  ReactDOM.renderToStaticMarkup(renderStraight())
+);
+console.log(
+  'Scriptify is equal to Reactify?',
+  ReactDOM.renderToStaticMarkup(renderReacon()) ===
+  ReactDOM.renderToStaticMarkup(renderSlowReacon())
+);

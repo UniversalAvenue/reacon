@@ -14,7 +14,7 @@ export default function Content(props) {
   return (<section>
     {title && <Title>{title}</Title>}
     {tagline && <Tagline>{tagline}</Tagline>}
-    {button && <Button>{Button}</Button>}
-    {cildren}
+    {button && <Button>{button}</Button>}
+    {children}
   </section>);
 }
