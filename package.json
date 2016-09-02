@@ -57,8 +57,5 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "dependencies": {
-    "jest-cli": "^15.1.0"
   }
 }
