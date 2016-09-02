@@ -86,7 +86,26 @@ describe('Reactify', () => {
           {
             type: 'div',
             props: {
-              children: 'I am a div',
+              children: [
+                {
+                  type: 'div',
+                  props: {
+                    style: {
+                      backgroundColor: 'blue',
+                    },
+                    children: 'More',
+                  },
+                },
+                {
+                  type: 'div',
+                  props: {
+                    style: {
+                      backgroundColor: 'red',
+                    },
+                    children: 'Less',
+                  },
+                },
+              ],
             },
           },
         ],
@@ -96,7 +115,10 @@ describe('Reactify', () => {
     const b = ReactDOM.renderToStaticMarkup(<div>
       <p>I am a paragraf</p>
       <h1>I am a header</h1>
-      <div>I am a div</div>
+      <div>
+        <div style={{ backgroundColor: 'blue' }}>More</div>
+        <div style={{ backgroundColor: 'red' }}>Less</div>
+      </div>
     </div>);
     expect(a).toEqual(b);
   });

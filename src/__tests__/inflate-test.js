@@ -1,7 +1,4 @@
-jest.autoMockOff();
-
-const slice = require('../index').sliceModifiers;
-const inflater = require('../index').inflater;
+import { sliceModifiers, inflater } from '../index';
 
 describe('SliceModifiers', () => {
   const target = {
@@ -39,7 +36,7 @@ describe('SliceModifiers', () => {
   ];
   it('should split content properly', () => {
     tests.forEach(test => {
-      const res = slice(test[0]);
+      const res = sliceModifiers(test[0]);
       expect(res).toEqual(test[1]);
     });
   });

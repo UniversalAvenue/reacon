@@ -20,7 +20,7 @@ export function sliceModifiers(content) {
   };
 }
 
-function deepTap(obj, tap, isTapable = () => true) {
+function deepTap(obj, tap, isTapable) {
   if (isTapable(obj)) {
     return tap(obj);
   } else if (_.isArray(obj)) {
@@ -56,12 +56,9 @@ export function injectParams(injectors) {
 
   return (content, params) => {
     function inject(val) {
-      if (!_.isString(val)) {
-        return val;
-      }
       return applyInjector(val, params);
     }
-    return deepTap(content, inject);
+    return deepTap(content, inject, _.isString);
   };
 }
 
@@ -130,6 +127,14 @@ function typeMiddleware(components) {
 }
 
 function propsMiddleware(injs, doReactify) {
+  if (injs.length < 1) {
+    return (content, Component) => {
+      const {
+        props,
+      } = content;
+      return <Component {...doReactify(props)} />;
+    };
+  }
   function matchInjector(str, key) {
     let match;
     const found = injs.find(i => {
@@ -175,7 +180,7 @@ function propsMiddleware(injs, doReactify) {
 }
 
 export function reactifier(components, {
-  injectors,
+  injectors = {},
   middlewares = [],
 } = {}) {
   const injs = Object.keys(injectors)
@@ -195,4 +200,41 @@ export function reactifier(components, {
     return all.reduce((Component, fn) => fn(obj, Component), null);
   }
   return doReactify;
+}
+
+
+function composeEval(str, key) {
+  const fn = props => {
+    try {
+      return (new Function(`with(this) { return ${str} }`)).call(props);
+    } catch (e) {
+      console.log(`Could not eval ${str}`, params);
+      return undefined;
+    }
+  };
+  return props => ({
+    [key]: fn(props),
+  });
+}
+
+
+export function scriptifier(components, {
+} = {}) {
+
+  function doReactify(content) {
+    return deepTap(content, render, isReacon);
+  }
+
+  function renderBase(obj) {
+    const {
+      type,
+      props,
+    } = obj;
+    return new Function(`
+      with(this) {
+        return React.createElement("${type}", ${JSON.stringify(props)});
+      }
+    `);
+  }
+  return content => deepTap(content, renderBase, isReacon);
 }
