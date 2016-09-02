@@ -108,16 +108,28 @@ function isReacon(obj) {
   return obj && obj.type && _.isString(obj.type);
 }
 
-export function reactifier(components, {
-  injectors,
-} = {}) {
-  const injs = Object.keys(injectors)
-    .map(key => [tokenize(key), injectors[key]]);
+function typeMiddleware(components) {
+  return (content) => {
+    const {
+      type,
+      ...rest,
+      props = {},
+    } = content;
+    if (!type) {
+      throw new Error('Tried to reactify an object without type');
+    }
+    let Component = components[type];
+    if (!Component) {
+      if (type[0] === type[0].toUpperCase()) {
+        throw new Error(`Couldn\'t find a matching component for ${type}`);
+      }
+      Component = type;
+    }
+    return Component;
+  };
+}
 
-  function doReactify(content) {
-    return deepTap(content, render, isReacon);
-  }
-
+function propsMiddleware(injs, doReactify) {
   function matchInjector(str, key) {
     let match;
     const found = injs.find(i => {
@@ -146,31 +158,41 @@ export function reactifier(components, {
       statics,
     };
   }
-
-  function render(obj) {
+  return (content, BaseComponent)  => {
     const {
-      type,
-      ...rest,
-      props = {},
-    } = obj;
-    if (!type) {
-      throw new Error('Tried to reactify an object without type');
-    }
-    let Component = components[type];
-    if (!Component) {
-      if (type[0] === type[0].toUpperCase()) {
-        throw new Error(`Couldn\'t find a matching component for ${type}`);
-      }
-      Component = type;
-    }
+      props,
+    } = content;
     const {
       dynamics,
       statics,
     } = dynamicSplit(props);
+    let Component = BaseComponent;
     if (dynamics.length > 0) {
       Component = compose(dynamics)(Component);
     }
     return <Component {...doReactify(statics)} />;
+  };
+}
+
+export function reactifier(components, {
+  injectors,
+  middlewares = [],
+} = {}) {
+  const injs = Object.keys(injectors)
+    .map(key => [tokenize(key), injectors[key]]);
+
+  const all = [
+    typeMiddleware(components),
+    ...middlewares,
+    propsMiddleware(injs, doReactify),
+  ];
+
+  function doReactify(content) {
+    return deepTap(content, render, isReacon);
+  }
+
+  function render(obj) {
+    return all.reduce((Component, fn) => fn(obj, Component), null);
   }
   return doReactify;
 }
