@@ -53,7 +53,8 @@
     "react-addons-test-utils": "^15.1.0",
     "react-dom": "^15.3.1",
     "rimraf": "^2.4.4",
-    "semantic-release": "^4.3.5"
+    "semantic-release": "^4.3.5",
+    "zombie": "^4.2.1"
   },
   "config": {
     "commitizen": {
