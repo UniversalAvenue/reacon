@@ -35,11 +35,14 @@ export default class Scriptifier {
   stringifyObject(props, evalProps = {}) {
     const propPairs = mapObject(props, this.stringify);
     const evalPropPairs = mapObject(evalProps, identity);
-    const str = [
-      propPairs,
-      evalPropPairs,
-    ].join(',');
-    return `{${str}}`;
+    const res = [
+      ...propPairs,
+      ...evalPropPairs,
+    ];
+    if (res.length < 1) {
+      return '{}';
+    }
+    return `{${res.join(',')}}`;
   }
 
   stringifyArray(props) {
@@ -57,17 +60,24 @@ export default class Scriptifier {
     return JSON.stringify(obj);
   }
   scriptify(content) {
-    const body = this.stringify(content);
-    return `function Component(props) {
-        return ${body};
-      }
-      return Component;`;
+    return this.stringify(content);
+  }
+  scriptComponent(content) {
+    const {
+      displayName,
+    } = content;
+    return `function ${displayName}(props) {
+      return ${this.stringifyReacon(content)}
+    }`;
   }
   runScript(script) {
     return new Function(
       'React',
       'components',
-      script
+      `function Component(props) {
+        return ${script};
+      }
+      return Component;`
     )(React, this.components);
   }
   reactify(content) {
