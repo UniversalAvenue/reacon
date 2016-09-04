@@ -3,8 +3,12 @@ import Scriptifier from '../scriptifier';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 
+const MyP = props => <p {...props}>my {props.children}</p>;
+
 describe('Scriptifier', () => {
-  const scriptifier = new Scriptifier({});
+  const scriptifier = new Scriptifier({
+    MyP,
+  });
   const reactify = reactifier({});
   it('should produce something', () => {
     const Component = scriptifier.reactify({
@@ -49,7 +53,7 @@ describe('Scriptifier', () => {
       },
       props: {
         children: {
-          type: 'p',
+          type: 'MyP',
           evalProps: {
             role: 'props.role',
           },
@@ -61,6 +65,6 @@ describe('Scriptifier', () => {
     };
     const Component = scriptifier.reactify(content);
     const res = ReactDOM.renderToStaticMarkup(<Component className="olle" role="greeter" />);
-    expect(res).toEqual('<div class="olle"><p role="greeter">Hola</p></div>');
+    expect(res).toEqual('<div class="olle"><p role="greeter">my Hola</p></div>');
   });
 });
