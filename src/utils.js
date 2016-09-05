@@ -18,18 +18,21 @@ export function sliceModifiers(content) {
   };
 }
 
-export function deepTap(obj, tap, isTapable) {
-  if (isTapable(obj)) {
+export function deepTap(obj, tap, isTapable, keyMap = identity) {
+  if (isTapable && isTapable(obj)) {
     return tap(obj);
   } else if (_.isArray(obj)) {
     return obj.map(item => deepTap(item, tap, isTapable));
   } else if (_.isObject(obj)) {
     return Object.keys(obj)
       .reduce((sum, key) => Object.assign(sum, {
-        [key]: deepTap(obj[key], tap, isTapable),
+        [keyMap(key)]: deepTap(obj[key], tap, isTapable),
       }), {});
   }
-  return isTapable(obj) ? tap(obj) : obj;
+  if (isTapable) {
+    return isTapable(obj) ? tap(obj) : obj;
+  }
+  return tap(obj);
 }
 
 export function tokenize(str) {

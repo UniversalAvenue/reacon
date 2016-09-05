@@ -71,4 +71,31 @@ describe('Scriptifier', () => {
     const res = ReactDOM.renderToStaticMarkup(<Component className="olle" role="button" />);
     expect(res).toEqual('<div class="olle"><p role="button">my Hola</p></div>');
   });
+  it('should use exposed nested props', () => {
+    const content = {
+      type: 'div',
+      evalProps: {
+        style: {
+          background: 'props.background',
+        },
+      },
+      props: {
+        style: {
+          color: 'blue',
+        },
+        children: {
+          type: 'MyP',
+          evalProps: {
+            role: 'props.role',
+          },
+          props: {
+            children: 'Hola',
+          },
+        },
+      },
+    };
+    const Component = scriptifier.reactify(content, components);
+    const res = ReactDOM.renderToStaticMarkup(<Component background="black" role="button" />);
+    expect(res).toEqual('<div style="color:blue;background:black;"><p role="button">my Hola</p></div>'); // eslint-disable-line
+  });
 });

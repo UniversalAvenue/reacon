@@ -1,11 +1,21 @@
 import React from 'react';
 import _ from 'lodash';
-import { identity, isReacon } from './utils';
+import { tokenize, isReacon, deepTap } from './utils';
 
 function mapObject(object, foo) {
   return Object.keys(object)
     .map(key =>
       `${JSON.stringify(key)}: ${foo(object[key])}`);
+}
+
+const evalToken = tokenize('EVAL');
+
+function isEval(str) {
+  if (!_.isString(str)) {
+    return false;
+  }
+  const match = evalToken.exec(str);
+  return match && match[1];
 }
 
 export default class Scriptifier {
@@ -33,17 +43,14 @@ export default class Scriptifier {
       evalProps = {},
       props = {},
     } = obj;
+    const evalObj = deepTap(evalProps, i => `EVAL ${i}`);
+    const finalProps = _.merge({}, props, evalObj);
     return `React.createElement(${this.stringifyComponent(type)},
-      ${this.stringifyObject(props, evalProps)})`;
+      ${this.stringifyObject(finalProps)})`;
   }
 
-  stringifyObject(props, evalProps = {}) {
-    const propPairs = mapObject(props, this.stringify);
-    const evalPropPairs = mapObject(evalProps, identity);
-    const res = [
-      ...propPairs,
-      ...evalPropPairs,
-    ];
+  stringifyObject(obj) {
+    const res = mapObject(obj, this.stringify);
     if (res.length < 1) {
       return '{}';
     }
@@ -51,7 +58,7 @@ export default class Scriptifier {
   }
 
   stringifyArray(props) {
-    return `[${props.map(item => this.stringify(item)).join(',')}]`;
+    return `[${props.map(this.stringify).join(',')}]`;
   }
 
   stringify(obj) {
@@ -61,6 +68,10 @@ export default class Scriptifier {
       return this.stringifyArray(obj);
     } else if (_.isObject(obj)) {
       return this.stringifyObject(obj);
+    }
+    const evalStr = isEval(obj);
+    if (evalStr) {
+      return evalStr;
     }
     return JSON.stringify(obj);
   }
