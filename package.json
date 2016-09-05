@@ -37,7 +37,6 @@
   "homepage": "https://github.com/UniversalAvenue/reacon#readme",
   "peerDependencies": {
     "lodash": "*",
-    "react-compose": "^1.7.0",
     "react": "^15.3.1"
   },
   "devDependencies": {
