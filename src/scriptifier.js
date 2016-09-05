@@ -9,15 +9,20 @@ function mapObject(object, foo) {
 }
 
 export default class Scriptifier {
-  constructor(components, opts) {
-    this.components = components;
-    this.opts = opts;
+  constructor({
+    locals = new Set(),
+  } = {}) {
+    this.locals = locals;
     this.stringify = this.stringify.bind(this);
+    this.dependencies = new Set();
   }
   stringifyComponent(type) {
-    if (type[0] === type[0].toUpperCase()
-        && this.components[type]) {
-      return `components.${type}`;
+    if (type[0] === type[0].toUpperCase()) {
+      if (this.locals.has(type)) {
+        this.dependencies.add(type);
+        return `locals[${JSON.stringify(type)}]`;
+      }
+      return `components[${JSON.stringify(type)}]`;
     }
     return JSON.stringify(type);
   }
@@ -70,7 +75,7 @@ export default class Scriptifier {
       return ${this.stringifyReacon(content)}
     }`;
   }
-  runScript(script) {
+  runScript(script, components) {
     return new Function( // eslint-disable-line
       'React',
       'components',
@@ -78,10 +83,10 @@ export default class Scriptifier {
         return ${script};
       }
       return Component;`
-    )(React, this.components);
+    )(React, components);
   }
-  reactify(content) {
+  reactify(content, components) {
     const script = this.scriptify(content);
-    return this.runScript(script);
+    return this.runScript(script, components);
   }
 }

@@ -66,5 +66,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "graph-data-structure": "^0.8.0"
   }
 }

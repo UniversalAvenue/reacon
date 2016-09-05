@@ -8,10 +8,11 @@ MyP.propTypes = {
   children: React.PropTypes.any,
 };
 
+const components = {
+  MyP,
+};
 describe('Scriptifier', () => {
-  const scriptifier = new Scriptifier({
-    MyP,
-  });
+  const scriptifier = new Scriptifier();
   const reactify = reactifier({});
   it('should produce something', () => {
     const Component = scriptifier.reactify({
@@ -43,7 +44,7 @@ describe('Scriptifier', () => {
         },
       },
     };
-    const Component = scriptifier.reactify(content);
+    const Component = scriptifier.reactify(content, components);
     const a = ReactDOM.renderToStaticMarkup(<Component />);
     const b = ReactDOM.renderToStaticMarkup(reactify(content));
     expect(a).toEqual(b);
@@ -66,7 +67,7 @@ describe('Scriptifier', () => {
         },
       },
     };
-    const Component = scriptifier.reactify(content);
+    const Component = scriptifier.reactify(content, components);
     const res = ReactDOM.renderToStaticMarkup(<Component className="olle" role="button" />);
     expect(res).toEqual('<div class="olle"><p role="button">my Hola</p></div>');
   });
