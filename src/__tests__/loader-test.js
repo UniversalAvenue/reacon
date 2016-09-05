@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/server';
 import Loader from '../loader';
 
 function evalComponent(script, components = {}) {
-  const foo = new Function('React', 'components', `return ${script}`); // eslint-disable-line
+  const foo = new Function('React', 'components', `return ${script}(React, components)`); // eslint-disable-line
   return foo(React, components);
 }
 

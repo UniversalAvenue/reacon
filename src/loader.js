@@ -64,7 +64,7 @@ export default class Loader {
       }
       Component.displayName = ${JSON.stringify(name)};
       return Component;
-    })(React, components)`;
+    })`;
   }
   compile(entry, name) {
     const graph = new Graph();
