@@ -1,6 +1,6 @@
 import React from 'react';
 import _ from 'lodash';
-import { identity, deepTap, isReacon } from './utils';
+import { identity, isReacon } from './utils';
 
 function mapObject(object, foo) {
   return Object.keys(object)
@@ -71,7 +71,7 @@ export default class Scriptifier {
     }`;
   }
   runScript(script) {
-    return new Function(
+    return new Function( // eslint-disable-line
       'React',
       'components',
       `function Component(props) {

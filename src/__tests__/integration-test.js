@@ -52,15 +52,15 @@ const doc = `<html>
 
 describe('User visits index page', () => {
   const browser = new Browser();
-  let stop;  
+  let stop;
   let originalTimeout;
 
-  beforeEach(function() {
-      originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
-      jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  beforeEach(() => {
+    originalTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
   });
 
-  afterEach(function() {
+  afterEach(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = originalTimeout;
   });
 
@@ -68,7 +68,7 @@ describe('User visits index page', () => {
     stop = serve(3089, (req, res) => {
       res.end(doc);
     });
-    browser.on('loaded', (e) => console.log('Idle'));
+    browser.on('loaded', () => console.log('Idle'));
     browser.visit('/').then(done);
   });
 
@@ -77,7 +77,6 @@ describe('User visits index page', () => {
   });
 
   describe('Is ok', () => {
-
     it('should be successful', () => {
       browser.pressButton('Sign up');
       browser.assert.success();

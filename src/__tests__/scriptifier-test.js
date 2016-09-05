@@ -1,9 +1,12 @@
-import { reactifier } from '../index';
-import Scriptifier from '../scriptifier';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
+import { reactifier } from '../index';
+import Scriptifier from '../scriptifier';
 
 const MyP = props => <p {...props}>my {props.children}</p>;
+MyP.propTypes = {
+  children: React.PropTypes.any,
+};
 
 describe('Scriptifier', () => {
   const scriptifier = new Scriptifier({
@@ -64,7 +67,7 @@ describe('Scriptifier', () => {
       },
     };
     const Component = scriptifier.reactify(content);
-    const res = ReactDOM.renderToStaticMarkup(<Component className="olle" role="greeter" />);
-    expect(res).toEqual('<div class="olle"><p role="greeter">my Hola</p></div>');
+    const res = ReactDOM.renderToStaticMarkup(<Component className="olle" role="button" />);
+    expect(res).toEqual('<div class="olle"><p role="button">my Hola</p></div>');
   });
 });

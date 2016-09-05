@@ -1,50 +1,8 @@
-import { sliceModifiers, inflater } from '../index';
-
-describe('SliceModifiers', () => {
-  const target = {
-    type: 'div',
-  };
-  const tests = [
-    [
-      [1,2,3,4,target],
-      {
-        mods: [1,2,3,4],
-        target,
-      },
-    ],
-    [
-      [target],
-      {
-        mods: [],
-        target,
-      },
-    ],
-    [
-      target,
-      {
-        mods: [],
-        target,
-      },
-    ],
-    [
-      [],
-      {
-        mods: [],
-        target: undefined,
-      },
-    ],
-  ];
-  it('should split content properly', () => {
-    tests.forEach(test => {
-      const res = sliceModifiers(test[0]);
-      expect(res).toEqual(test[1]);
-    });
-  });
-});
+import { inflater } from '../index';
 
 function scopedEval(str, params) {
   try {
-    return (new Function(`with(this) { return ${str} }`)).call(params); 
+    return (new Function(`with(this) { return ${str} }`)).call(params); // eslint-disable-line
   } catch (e) {
     console.log(`Could not eval ${str}`, params);
     return str;
@@ -55,9 +13,8 @@ describe('Inflater', () => {
   const inflate = inflater({
     modifiers: [],
     injectors: {
-      get: (str, params) => {
-        return params[str];
-      },
+      get: (str, params) =>
+        params[str],
       eval: scopedEval,
     },
   });

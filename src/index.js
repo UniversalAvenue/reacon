@@ -1,42 +1,12 @@
 import React from 'react';
 import _ from 'lodash';
-import { compose } from 'react-compose';
-
-function identity(id) {
-  return id;
-}
-
-export function sliceModifiers(content) {
-  if (_.isArray(content)) {
-    const lastIdx = content.length - 1;
-    return {
-      mods: content.slice(0, lastIdx),
-      target: content[lastIdx],
-    };
-  }
-  return {
-    mods: [],
-    target: content,
-  };
-}
-
-function deepTap(obj, tap, isTapable) {
-  if (isTapable(obj)) {
-    return tap(obj);
-  } else if (_.isArray(obj)) {
-    return obj.map(item => deepTap(item, tap, isTapable));
-  } else if (_.isObject(obj)) {
-    return Object.keys(obj)
-      .reduce((sum, key) => Object.assign(sum, {
-        [key]: deepTap(obj[key], tap, isTapable),
-      }), {});
-  }
-  return isTapable(obj) ? tap(obj) : obj;
-}
-
-function tokenize(str) {
-  return new RegExp(`^${str.toUpperCase()}\\s*(.+)$`);
-}
+import {
+  tokenize,
+  sliceModifiers,
+  identity,
+  isReacon,
+  deepTap,
+} from './utils';
 
 export function injectParams(injectors) {
   const injs = Object.keys(injectors)
@@ -101,17 +71,10 @@ export function inflater({
   };
 }
 
-function isReacon(obj) {
-  return obj && obj.type && _.isString(obj.type);
-}
-
 function typeMiddleware(components) {
-  return (content) => {
-    const {
-      type,
-      ...rest,
-      props = {},
-    } = content;
+  return ({
+    type,
+  }) => {
     if (!type) {
       throw new Error('Tried to reactify an object without type');
     }
@@ -135,47 +98,11 @@ function propsMiddleware(injs, doReactify) {
       return <Component {...doReactify(props)} />;
     };
   }
-  function matchInjector(str, key) {
-    let match;
-    const found = injs.find(i => {
-      match = i[0].exec(str);
-      return match;
-    });
-    if (match) {
-      return found[1](match[1], key);
-    }
-    return null;
-  }
-
-  function dynamicSplit(props) {
-    const dynamics = [];
-    const statics = {};
-    Object.keys(props).forEach(key => {
-      const match = matchInjector(props[key], key);
-      if (match) {
-        dynamics.push(match);
-      } else {
-        statics[key] = props[key];
-      }
-    });
-    return {
-      dynamics,
-      statics,
-    };
-  }
-  return (content, BaseComponent)  => {
+  return (content, Component) => {
     const {
       props,
     } = content;
-    const {
-      dynamics,
-      statics,
-    } = dynamicSplit(props);
-    let Component = BaseComponent;
-    if (dynamics.length > 0) {
-      Component = compose(dynamics)(Component);
-    }
-    return <Component {...doReactify(statics)} />;
+    return <Component {...doReactify(props)} />;
   };
 }
 
@@ -186,91 +113,18 @@ export function reactifier(components, {
   const injs = Object.keys(injectors)
     .map(key => [tokenize(key), injectors[key]]);
 
-  const all = [
-    typeMiddleware(components),
-    ...middlewares,
-    propsMiddleware(injs, doReactify),
-  ];
+  function render(obj) {
+    return all.reduce((Component, fn) => fn(obj, Component), null); // eslint-disable-line
+  }
 
   function doReactify(content) {
     return deepTap(content, render, isReacon);
   }
 
-  function render(obj) {
-    return all.reduce((Component, fn) => fn(obj, Component), null);
-  }
+  const all = [
+    typeMiddleware(components),
+    ...middlewares,
+    propsMiddleware(injs, doReactify),
+  ];
   return doReactify;
-}
-
-
-function composeEval(str, key) {
-  const fn = props => {
-    try {
-      return (new Function(`with(this) { return ${str} }`)).call(props);
-    } catch (e) {
-      console.log(`Could not eval ${str}`, params);
-      return undefined;
-    }
-  };
-  return props => ({
-    [key]: fn(props),
-  });
-}
-
-
-export function scriptifier(components, {
-} = {}) {
-
-  function stringifyComponent(type) {
-    if (type[0] === type[0].toUpperCase()
-        && components[type]) {
-      return type;
-    }
-    return JSON.stringify(type);
-  }
-
-  function stringifyReacon(obj) {
-    const {
-      type,
-      props,
-    } = obj;
-    return `React.createElement(${stringifyComponent(type)}, ${stringify(props)})`;
-  }
-
-  function stringifyObject(props) {
-    const val = Object.keys(props)
-      .map(key =>
-        `${JSON.stringify(key)}: ${stringify(props[key])}`)
-      .join(', ');
-    return `{${val}}`;
-  }
-
-  function stringifyArray(props) {
-    return `[${props.map(item => stringify(item)).join(',')}]`;
-  }
-
-  function stringify(obj) {
-    if (isReacon(obj)) {
-      return stringifyReacon(obj);
-    } else if (_.isArray(obj)) {
-      return stringifyArray(obj);
-    } else if (_.isObject(obj)) {
-      return stringifyObject(obj);
-    }
-    return JSON.stringify(obj);
-  }
-
-  function renderBase(obj) {
-    return new Function(`
-      with(this) {
-        return () => {
-          return ${stringify(obj)};
-        };
-      }
-    `).call({
-      React,
-      ...components,
-    });
-  }
-  return content => deepTap(content, renderBase, isReacon);
 }
