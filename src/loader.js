@@ -6,17 +6,20 @@ export default class Loader {
     blocks = {},
     PromiseRef = Promise,
     scriptMapper = content => Promise.resolve(content),
+    entryMapper,
   } = {}) {
     this.blocks = blocks;
     this.scripts = {};
     this.PromiseRef = PromiseRef;
     this.scriptMapper = scriptMapper;
+    this.entryMapper = entryMapper || scriptMapper;
   }
-  scriptify(content) {
+  scriptify(content, isEntry) {
     const scriptifier = new Scriptifier({
       locals: new Set(Object.keys(this.blocks)),
     });
-    return this.scriptMapper(content)
+    return (isEntry ? this.entryMapper(content) :
+        this.scriptMapper(content))
       .then(c => scriptifier.scriptify(c))
       .then(script => ({
         script,
@@ -75,7 +78,7 @@ export default class Loader {
   }
   compile(entry, name) {
     const graph = new Graph();
-    return this.scriptify(entry)
+    return this.scriptify(entry, true)
       .then(({
         script,
         dependencies,
