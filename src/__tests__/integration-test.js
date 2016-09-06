@@ -37,28 +37,27 @@ const loader = new Loader({
   },
 });
 
-const script = loader.compile(page, 'Page');
-
-const doc = `<html>
-  <body>
-    <script>${reactScript}</script>
-    <script>${reactDOMScript}</script>
-    <div id="app"></div>
-    <script>
-      function Component(props) {
-        return React.createElement('button', {}, 'My global button');
-      }
-      var components = {
-        MyGlobalComponent: Component,
-      };
-      const Page = ${script}(React, components);
-      ReactDOM.render(
-        React.createElement(Page),
-        document.getElementById('app')
-      );
-    </script>
-  </body>
-</html>`;
+const doc = loader.compile(page, 'Page')
+  .then(script => `<html>
+    <body>
+      <script>${reactScript}</script>
+      <script>${reactDOMScript}</script>
+      <div id="app"></div>
+      <script>
+        function Component(props) {
+          return React.createElement('button', {}, 'My global button');
+        }
+        var components = {
+          MyGlobalComponent: Component,
+        };
+        const Page = ${script}(React, components);
+        ReactDOM.render(
+          React.createElement(Page),
+          document.getElementById('app')
+        );
+      </script>
+    </body>
+  </html>`);
 
 describe('User visits index page', () => {
   const browser = new Browser();
@@ -76,7 +75,8 @@ describe('User visits index page', () => {
 
   beforeEach((done) => {
     stop = serve(3089, (req, res) => {
-      res.end(doc);
+      doc.then(d => res.end(d))
+        .catch(e => console.error(e));
     });
     browser.visit('/').then(done);
   });
