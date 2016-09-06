@@ -1,7 +1,7 @@
 {
   "name": "reacon",
   "description": "React component object notation",
-  "version": "2.0",
+  "version": "2.0.0",
   "main": "lib/index.js",
   "scripts": {
     "clean": "./node_modules/rimraf/bin.js lib",
