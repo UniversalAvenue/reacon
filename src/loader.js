@@ -7,19 +7,26 @@ export default class Loader {
     PromiseRef = Promise,
     scriptMapper = content => Promise.resolve(content),
     entryMapper,
+    mapContext = {},
+    mapArgs = [],
   } = {}) {
     this.blocks = blocks;
     this.scripts = {};
     this.PromiseRef = PromiseRef;
     this.scriptMapper = scriptMapper;
     this.entryMapper = entryMapper || scriptMapper;
+    this.mapContext = mapContext;
+    this.mapArgs = mapArgs;
+  }
+  mapScript(content, isEntry) {
+    const mapper = isEntry ? this.entryMapper : this.scriptMapper;
+    return mapper.apply(this.mapContext, [content, ...this.mapArgs]);
   }
   scriptify(content, isEntry) {
     const scriptifier = new Scriptifier({
       locals: new Set(Object.keys(this.blocks)),
     });
-    return (isEntry ? this.entryMapper(content) :
-        this.scriptMapper(content))
+    return this.mapScript(content, isEntry)
       .then(c => scriptifier.scriptify(c))
       .then(script => ({
         script,
