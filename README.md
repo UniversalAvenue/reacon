@@ -16,7 +16,7 @@ Examples
       children: {
         {
           component: 'p',
-          children: 'This is a paragraf',
+          children: 'This is a paragraph',
         },
         {
           component: 'p',
@@ -32,7 +32,7 @@ Examples
 Will produce the following:
 
     <div>
-      <p>This is a paragraf</p>
+      <p>This is a paragraph</p>
       <p>Interpolate with data and props</p>
     </div>
 
