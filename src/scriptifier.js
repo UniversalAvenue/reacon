@@ -1,6 +1,6 @@
-import React from 'react';
 import _ from 'lodash';
-import { tokenize, isReacon, deepTap } from './utils';
+import { tokenize, isReacon } from './utils';
+import factory from './factory';
 
 function saferStringify(str) {
   if (_.isString(str)) {
@@ -50,15 +50,8 @@ export default class Scriptifier {
   }
 
   stringifyReacon(obj) {
-    const {
-      type,
-      evalProps = {},
-      props = {},
-    } = obj;
-    const evalObj = deepTap(evalProps, i => `EVAL ${i}`);
-    const finalProps = _.merge({}, props, evalObj);
-    return `React.createElement(${this.stringifyComponent(type)},
-      ${this.stringifyObject(finalProps)})`;
+    return `factory(${this.stringifyComponent(obj.type)},
+      ${this.stringifyObject(obj)}, props)`;
   }
 
   stringifyObject(obj) {
@@ -90,23 +83,15 @@ export default class Scriptifier {
   scriptify(content) {
     return this.stringify(content);
   }
-  scriptComponent(content) {
-    const {
-      displayName,
-    } = content;
-    return `function ${displayName}(props) {
-      return ${this.stringifyReacon(content)}
-    }`;
-  }
   runScript(script, components) {
     return new Function( // eslint-disable-line
-      'React',
+      'factory',
       'components',
       `function Component(props) {
         return ${script};
       }
       return Component;`
-    )(React, components);
+    )(factory, components);
   }
   reactify(content, components) {
     const script = this.scriptify(content);

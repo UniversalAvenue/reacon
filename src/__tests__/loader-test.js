@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import Loader from '../loader';
+import factory from '../factory';
 
 function evalComponent(script, components = {}) {
-  const foo = new Function('React', 'components', `return ${script}(React, components)`); // eslint-disable-line
-  return foo(React, components);
+  const foo = new Function('factory', 'components', `return ${script}(factory, components)`); // eslint-disable-line
+  return foo(factory, components);
 }
 
 describe('Loader', () => {

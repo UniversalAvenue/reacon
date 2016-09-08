@@ -26,8 +26,8 @@ const page = {
 
 const MyComponent = {
   type: 'button',
-  evalProps: {
-    children: 'props.text',
+  props: {
+    children: 'Sign up',
   },
 };
 
@@ -51,7 +51,10 @@ const doc = loader.compile(page, 'Page')
         var components = {
           MyGlobalComponent: Component,
         };
-        const Page = ${script}(React, components);
+        function factory(Comp, config) {
+          return React.createElement(Comp, config.props);
+        }
+        const Page = ${script}(factory, components);
         ReactDOM.render(
           React.createElement(Page),
           document.getElementById('app')
