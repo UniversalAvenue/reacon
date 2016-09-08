@@ -76,7 +76,7 @@ export default class Loader {
     return this.PromiseRef.all(graph.topologicalSort()
       .map(dep => this.localizeDependency(dep)))
       .then(deps => deps.join(',\n'))
-      .then(dependencies => `(function (React, components) {
+      .then(dependencies => `(function (factory, components) {
         var locals = {
           ${dependencies}
         };
