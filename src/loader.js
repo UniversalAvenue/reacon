@@ -9,6 +9,7 @@ export default class Loader {
     entryMapper,
     mapContext = {},
     mapArgs = [],
+    globals = [],
   } = {}) {
     this.blocks = blocks;
     this.scripts = {};
@@ -17,6 +18,8 @@ export default class Loader {
     this.entryMapper = entryMapper || scriptMapper;
     this.mapContext = mapContext;
     this.mapArgs = mapArgs;
+    this.locals = new Set(Object.keys(blocks));
+    this.globals = new Set(globals);
   }
   mapScript(content, isEntry) {
     const mapper = isEntry ? this.entryMapper : this.scriptMapper;
@@ -24,7 +27,8 @@ export default class Loader {
   }
   scriptify(content, isEntry) {
     const scriptifier = new Scriptifier({
-      locals: new Set(Object.keys(this.blocks)),
+      globals: this.globals,
+      locals: this.locals,
     });
     return this.mapScript(content, isEntry)
       .then(c => scriptifier.scriptify(c))

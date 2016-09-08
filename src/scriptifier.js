@@ -20,9 +20,11 @@ function isEval(str) {
 
 export default class Scriptifier {
   constructor({
-    locals = new Set(),
+    locals = [],
+    globals = [],
   } = {}) {
-    this.locals = locals;
+    this.locals = new Set(locals);
+    this.globals = new Set(globals);
     this.stringify = this.stringify.bind(this);
     this.dependencies = new Set();
   }
@@ -31,6 +33,9 @@ export default class Scriptifier {
       if (this.locals.has(type)) {
         this.dependencies.add(type);
         return `locals[${JSON.stringify(type)}]`;
+      }
+      if (!this.globals.has(type)) {
+        throw new Error(`All external components need be whitelisted, ${type} is not on that list`);
       }
       return `components[${JSON.stringify(type)}]`;
     }

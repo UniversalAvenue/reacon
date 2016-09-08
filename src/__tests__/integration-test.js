@@ -35,6 +35,7 @@ const loader = new Loader({
   blocks: {
     MyComponent,
   },
+  globals: ['MyGlobalComponent'],
 });
 
 const doc = loader.compile(page, 'Page')
@@ -89,7 +90,7 @@ describe('User visits index page', () => {
     it('should be successful', () => {
       browser.pressButton('Sign up');
       browser.pressButton('My global button');
-      browser.assert.success();
+      return browser.assert.success();
     });
   });
 });

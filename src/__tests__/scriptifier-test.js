@@ -12,7 +12,9 @@ const components = {
   MyP,
 };
 describe('Scriptifier', () => {
-  const scriptifier = new Scriptifier();
+  const scriptifier = new Scriptifier({
+    globals: Object.keys(components),
+  });
   const reactify = reactifier({});
   it('should produce something', () => {
     const Component = scriptifier.reactify({
