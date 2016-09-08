@@ -48,7 +48,7 @@ export function inflater({
       let modification = identity;
       if (type) {
         if (!modifiers[type]) {
-          return PromiseRef.reject(`Could not find a matching modifier named ${type}`);
+          throw new Error(`Could not find a matching modifier named ${type}`);
         }
         modification = modifiers[type];
       }
