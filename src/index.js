@@ -52,10 +52,10 @@ export function inflater({
         }
         modification = modifiers[type];
       }
-      return modification(props, {
+      return PromiseRef.resolve(modification(props, {
         ...outerParams,
         ...params,
-      });
+      })).then(res => Object.assign(outerParams, res));
     });
   }
   return (content, params = {}) => {
