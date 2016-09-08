@@ -2,10 +2,17 @@ import React from 'react';
 import _ from 'lodash';
 import { tokenize, isReacon, deepTap } from './utils';
 
+function saferStringify(str) {
+  if (_.isString(str)) {
+    return JSON.stringify(str.replace(/[\u2028\u2029]/g, ''));
+  }
+  return JSON.stringify(str);
+}
+
 function mapObject(object, foo) {
   return Object.keys(object)
     .map(key =>
-      `${JSON.stringify(key)}: ${foo(object[key])}`);
+      `${saferStringify(key)}: ${foo(object[key])}`);
 }
 
 const evalToken = tokenize('EVAL');
@@ -32,14 +39,14 @@ export default class Scriptifier {
     if (type[0] === type[0].toUpperCase()) {
       if (this.locals.has(type)) {
         this.dependencies.add(type);
-        return `locals[${JSON.stringify(type)}]`;
+        return `locals[${saferStringify(type)}]`;
       }
       if (!this.globals.has(type)) {
         throw new Error(`All external components need be whitelisted, ${type} is not on that list`);
       }
-      return `components[${JSON.stringify(type)}]`;
+      return `components[${saferStringify(type)}]`;
     }
-    return JSON.stringify(type);
+    return saferStringify(type);
   }
 
   stringifyReacon(obj) {
@@ -78,7 +85,7 @@ export default class Scriptifier {
     if (evalStr) {
       return evalStr;
     }
-    return JSON.stringify(obj);
+    return saferStringify(obj);
   }
   scriptify(content) {
     return this.stringify(content);

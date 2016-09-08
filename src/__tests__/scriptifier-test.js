@@ -8,6 +8,8 @@ MyP.propTypes = {
   children: React.PropTypes.any,
 };
 
+const uftLetters = require('./utf-stuff.json').str;
+
 const components = {
   MyP,
 };
@@ -26,13 +28,13 @@ describe('Scriptifier', () => {
             style: {
               zIndex: 12,
             },
-            children: 'Hola',
+            children: 'a string',
           },
         },
       },
     });
     const res = ReactDOM.renderToStaticMarkup(<Component />);
-    expect(res).toEqual('<div><p style="z-index:12;">Hola</p></div>');
+    expect(res).toEqual('<div><p style="z-index:12;">a string</p></div>');
   });
   it('should be equal to reactify approach', () => {
     const content = {
@@ -99,5 +101,23 @@ describe('Scriptifier', () => {
     const Component = scriptifier.reactify(content, components);
     const res = ReactDOM.renderToStaticMarkup(<Component background="black" role="button" />);
     expect(res).toEqual('<div style="color:blue;background:black;"><p role="button">my Hola</p></div>'); // eslint-disable-line
+  });
+  it('should kill \u2028 and \u2029', () => {
+    const Component = scriptifier.reactify({
+      type: 'div',
+      props: {
+        children: {
+          type: 'p',
+          props: {
+            style: {
+              zIndex: 12,
+            },
+            children: `This (${uftLetters}) is nothing`,
+          },
+        },
+      },
+    });
+    const res = ReactDOM.renderToStaticMarkup(<Component />);
+    expect(res).toEqual('<div><p style="z-index:12;">This () is nothing</p></div>');
   });
 });
