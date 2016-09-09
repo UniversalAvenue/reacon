@@ -58,36 +58,40 @@ export default class Loader {
         )
       );
   }
+  compileDependency(script, name) {
+    if (process.env.NODE_ENV !== 'production') {
+      return `(function (props) {
+        return ${script};
+      })`;
+    }
+    return `(function () {
+      function Component(props) {
+        return ${script};
+      }
+      Component.displayName = ${JSON.stringify(name)};
+      return Component;
+    })()`;
+  }
   localizeDependency(name) {
     if (!this.scripts[name]) {
       throw new Error(`${name} has not been properly resolved`);
     }
     return this.scripts[name]
       .then(({ script }) =>
-        `${JSON.stringify(name)}: (function () {
-          function Component(props) {
-            return ${script};
-          }
-          Component.displayName = ${JSON.stringify(name)};
-          return Component;
-        })()`);
+        `${JSON.stringify(name)}: ${this.compileDependency(script, name)}`);
   }
-  assemble(script, graph, name = 'Component') {
+  assemble(script, graph) {
     return this.PromiseRef.all(graph.topologicalSort()
       .map(dep => this.localizeDependency(dep)))
       .then(deps => deps.join(',\n'))
-      .then(dependencies => `(function (factory, components) {
+      .then(dependencies => `(function (factory, components, props) {
         var locals = {
           ${dependencies}
         };
-        function Component(props) {
-          return ${script};
-        }
-        Component.displayName = ${JSON.stringify(name)};
-        return Component;
+        return ${script};
       })`);
   }
-  compile(entry, name) {
+  compile(entry) {
     const graph = new Graph();
     return this.scriptify(entry, true)
       .then(({
@@ -101,6 +105,6 @@ export default class Loader {
               return this.resolveDependency(dep, graph);
             })
         ).then(() => script)
-      ).then(script => this.assemble(script, graph, name));
+      ).then(script => this.assemble(script, graph));
   }
 }

@@ -51,12 +51,12 @@ const doc = loader.compile(page, 'Page')
         var components = {
           MyGlobalComponent: Component,
         };
-        function factory(Comp, config) {
-          return React.createElement(Comp, config.props);
+        function factory(Comp, props) {
+          return React.createElement(Comp, props);
         }
-        const Page = ${script}(factory, components);
+        const body = ${script}(factory, components);
         ReactDOM.render(
-          React.createElement(Page),
+          body,
           document.getElementById('app')
         );
       </script>

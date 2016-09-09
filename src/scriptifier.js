@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { tokenize, isReacon } from './utils';
+import { tokenize, isReacon, deepTap } from './utils';
 import factory from './factory';
 
 function saferStringify(str) {
@@ -50,8 +50,21 @@ export default class Scriptifier {
   }
 
   stringifyReacon(obj) {
-    return `factory(${this.stringifyComponent(obj.type)},
-      ${this.stringifyObject(obj)}, props)`;
+    const {
+      type,
+      defaultProps,
+      spread,
+      props,
+      evalProps,
+    } = obj;
+    const args = [
+      this.stringifyComponent(type),
+      defaultProps && this.stringifyObject(defaultProps),
+      spread && 'props',
+      props && this.stringifyObject(props),
+      evalProps && this.stringifyObject(deepTap(evalProps, str => `EVAL ${str}`, _.isString)),
+    ].filter(t => t);
+    return `factory(${args.join(', ')})`;
   }
 
   stringifyObject(obj) {
