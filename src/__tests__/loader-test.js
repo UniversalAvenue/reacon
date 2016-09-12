@@ -37,10 +37,18 @@ describe('Loader', () => {
       children: 'props.children',
     },
   };
+  const BlockInABlock = {
+    type: 'div',
+    props: {
+      children: 'BlockInABlock',
+    },
+  };
   const MyThirdBlock = {
     type: 'header',
     props: {
-      children: 'My third block',
+      children: {
+        type: 'BlockInABlock',
+      },
     },
   };
   const MyForthBlock = {
@@ -65,13 +73,14 @@ describe('Loader', () => {
         MyBlock,
         MyThirdBlock,
         MyForthBlock,
+        BlockInABlock,
       },
     });
     return loader.compile(entry)
       .then(t => {
         const body = evalComponent(t);
         const html = ReactDOM.renderToStaticMarkup(body);
-        expect(html).toEqual('<div><section><header>My third block</header><p>Mid level block</p></section><header>My third block</header><p>Top level block</p></div>'); // eslint-disable-line
+        expect(html).toEqual('<div><section><header><div>BlockInABlock</div></header><p>Mid level block</p></section><header><div>BlockInABlock</div></header><p>Top level block</p></div>'); // eslint-disable-line
       }).then(done);
   });
   it('should map scripts', (done) => {

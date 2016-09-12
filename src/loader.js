@@ -50,6 +50,7 @@ export default class Loader {
           dependencies
             .map(dep => {
               if (graph.nodes().indexOf(dep) < 0) {
+                graph.addEdge(dep, dependency);
                 return this.resolveDependency(dep, graph);
               }
               graph.addEdge(dep, dependency);
