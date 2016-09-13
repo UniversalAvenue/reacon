@@ -9,23 +9,42 @@ Use `reacon` to compile a plain json object into a composite React component.
 
 Examples
 
-    import { reactify } from 'reacon';
-    
-    const injectable = reactify({
-      component: 'div',
-      children: {
-        {
-          component: 'p',
-          children: 'This is a paragraph',
-        },
-        {
-          component: 'p',
-          children: 'TEMPLATE Interpolate with ${data.value} and ${props.value}',
-        },
-      },
+    import { reactify, inflater } from 'reacon';
+
+    const inflate = inflater({
+      inliners: [],
+      modifiers: [],
     });
 
-    const Component = injectable({ value: 'data' });
+    const inflated = inflate([
+      {
+        type: 'modifier',
+        props: {
+          resource: 'A',
+        },
+      },
+      {
+        type: 'div',
+        props: {
+          children: {
+            {
+              type: 'p',
+              props: {
+                children: 'This is a paragraf',
+              },
+            },
+            {
+              type: 'p',
+              props: {
+                children: 'TEMPLATE Interpolate with ${value}',
+              },
+            },
+          },
+        },
+      },
+    ]);
+    
+    const Component = reactify(inflated);
 
     return <Component value="props" />;
 
