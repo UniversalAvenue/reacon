@@ -10,8 +10,14 @@ MyP.propTypes = {
 
 const uftLetters = require('./utf-stuff.json').str;
 
+const Display = props =>
+  (<p
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(props, null, '  ') }}
+  />);
+
 const components = {
   MyP,
+  Display,
 };
 describe('Scriptifier', () => {
   const scriptifier = new Scriptifier({
@@ -119,5 +125,28 @@ describe('Scriptifier', () => {
     });
     const res = ReactDOM.renderToStaticMarkup(<Component />);
     expect(res).toEqual('<div><p style="z-index:12;">This () is nothing</p></div>');
+  });
+  it('should eval complex types', () => {
+    const content = {
+      type: 'Display',
+      evalProps: {
+        iconList: {
+          items: ['"firstItem"', 'props.label', 5],
+        },
+      },
+    };
+    const Component = scriptifier.reactify(content, components);
+    const res = ReactDOM.renderToStaticMarkup(<Component label="daniel" />);
+    expect(res).toEqual(
+      [
+        '<p>',
+        JSON.stringify({
+          iconList: {
+            items: ['firstItem', 'daniel', 5],
+          },
+        }, null, '  '),
+        '</p>',
+      ].join('')
+    );
   });
 });
