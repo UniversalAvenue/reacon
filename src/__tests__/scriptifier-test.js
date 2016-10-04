@@ -149,4 +149,50 @@ describe('Scriptifier', () => {
       ].join('')
     );
   });
+  it('should allow nested rendered components', () => {
+    const content = {
+      type: 'div',
+      defaultProps: {
+        children: {
+          type: 'p',
+          props: {
+            children: 'Default message',
+          },
+        },
+      },
+      props: {
+        children: {
+          type: 'p',
+          props: {
+            children: 'Hola',
+          },
+        },
+      },
+    };
+    const Component = scriptifier.reactify(content, components);
+    const res = ReactDOM.renderToStaticMarkup(<Component />);
+    expect(res).toEqual('<div><p>Hola</p></div>'); // eslint-disable-line
+  });
+  it('should allow injected rendered components', () => {
+    const content = {
+      type: 'div',
+      defaultProps: {
+        children: {
+          type: 'p',
+          props: {
+            children: 'Default message',
+          },
+        },
+      },
+      props: {
+        children: {
+          type: 'p',
+          spread: true,
+        },
+      },
+    };
+    const Component = scriptifier.reactify(content, components);
+    const res = ReactDOM.renderToStaticMarkup(<Component>Hello override</Component>);
+    expect(res).toEqual('<div><p>Hello override</p></div>'); // eslint-disable-line
+  });
 });
