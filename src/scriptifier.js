@@ -96,6 +96,7 @@ export default class Scriptifier {
   scriptify(content) {
     return this.stringify(content);
   }
+  // eslint-disable-next-line
   runScript(script, components) {
     return new Function( // eslint-disable-line
       'factory',
@@ -103,7 +104,7 @@ export default class Scriptifier {
       `function Component(props) {
         return ${script};
       }
-      return Component;`
+      return Component;`,
     )(factory, components);
   }
   reactify(content, components) {

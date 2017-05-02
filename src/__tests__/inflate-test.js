@@ -35,7 +35,7 @@ describe('Inflater', () => {
       target,
     ]);
     inflated.then(res =>
-      expect(res).toEqual(target)
+      expect(res).toEqual(target),
     ).then(done);
   });
   it('should produce a valid injected result', (done) => {
@@ -65,7 +65,7 @@ describe('Inflater', () => {
         deep: {
           array: [12, 2268],
         },
-      })
+      }),
     ).then(done);
   });
 });

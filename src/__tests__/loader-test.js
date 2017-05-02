@@ -77,7 +77,7 @@ describe('Loader', () => {
       },
     });
     return loader.compile(entry)
-      .then(t => {
+      .then((t) => {
         const body = evalComponent(t);
         const html = ReactDOM.renderToStaticMarkup(body);
         expect(html).toEqual('<div><section><header><div>BlockInABlock</div></header><p>Mid level block</p></section><header><div>BlockInABlock</div></header><p>Top level block</p></div>'); // eslint-disable-line
@@ -93,7 +93,7 @@ describe('Loader', () => {
       }),
     });
     return loader.compile(entry)
-      .then(t => {
+      .then((t) => {
         const body = evalComponent(t);
         const html = ReactDOM.renderToStaticMarkup(body);
         expect(html).toEqual('<p>This block is overriden</p>'); // eslint-disable-line
@@ -150,7 +150,7 @@ describe('Heavy load', () => {
     });
     const tm1 = Date.now();
     return loader.compile(entry, 'Big')
-      .then(t => {
+      .then((t) => {
         const t0 = Date.now();
         const body = evalComponent(t);
         const t1 = Date.now();

@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import { reactifier } from '../index';
@@ -5,7 +6,7 @@ import Scriptifier from '../scriptifier';
 
 const MyP = props => <p {...props}>my {props.children}</p>;
 MyP.propTypes = {
-  children: React.PropTypes.any,
+  children: PropTypes.element.isRequired,
 };
 
 const uftLetters = require('./utf-stuff.json').str;
@@ -146,7 +147,7 @@ describe('Scriptifier', () => {
           },
         }, null, '  '),
         '</p>',
-      ].join('')
+      ].join(''),
     );
   });
   it('should allow nested rendered components', () => {

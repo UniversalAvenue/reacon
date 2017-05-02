@@ -14,7 +14,7 @@ export function injectParams(injectors) {
 
   function applyInjector(str, params) {
     let match;
-    const found = injs.find(i => {
+    const found = injs.find((i) => {
       match = i[0].exec(str);
       return match;
     });
@@ -39,7 +39,7 @@ export function inflater({
 }) {
   const inject = injectParams(injectors);
   function applyModifier(sum, mod) {
-    return sum.then(outerParams => {
+    return sum.then((outerParams) => {
       const {
         type,
         params = {},
@@ -81,7 +81,7 @@ function typeMiddleware(components) {
     let Component = components[type];
     if (!Component) {
       if (type[0] === type[0].toUpperCase()) {
-        throw new Error(`Couldn\'t find a matching component for ${type}`);
+        throw new Error(`Couldn't find a matching component for ${type}`);
       }
       Component = type;
     }

@@ -35,7 +35,7 @@ describe('SliceModifiers', () => {
     ],
   ];
   it('should split content properly', () => {
-    tests.forEach(test => {
+    tests.forEach((test) => {
       const res = sliceModifiers(test[0]);
       expect(res).toEqual(test[1]);
     });

@@ -48,17 +48,18 @@ export default class Loader {
       .then(({ dependencies }) =>
         this.PromiseRef.all(
           dependencies
-            .map(dep => {
+            .map((dep) => {
               if (graph.nodes().indexOf(dep) < 0) {
                 graph.addEdge(dep, dependency);
                 return this.resolveDependency(dep, graph);
               }
               graph.addEdge(dep, dependency);
               return null;
-            })
-        )
+            }),
+        ),
       );
   }
+  // eslint-disable-next-line
   compileDependency(script, name) {
     if (process.env.NODE_ENV === 'production') {
       return `(function (props) {
@@ -101,11 +102,11 @@ export default class Loader {
       }) =>
         this.PromiseRef.all(
           dependencies
-            .map(dep => {
+            .map((dep) => {
               graph.addNode(dep);
               return this.resolveDependency(dep, graph);
-            })
-        ).then(() => script)
+            }),
+        ).then(() => script),
       ).then(script => this.assemble(script, graph));
   }
 }
